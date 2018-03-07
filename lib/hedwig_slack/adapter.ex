@@ -67,11 +67,12 @@ defmodule Hedwig.Adapters.Slack do
   end
 
   def handle_info(%{"type" => "message", "user" => user} = msg, %{robot: robot, users: users} = state) do
+    msg_text = Regex.replace(~r/<@#{state.id}>/, msg["text"], "#{state.name}")
     msg = %Hedwig.Message{
       ref: make_ref(),
       robot: robot,
       room: msg["channel"],
-      text: msg["text"],
+      text: msg_text,
       type: "message",
       user: %Hedwig.User{
         id: user,
